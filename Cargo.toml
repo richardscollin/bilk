@@ -1,9 +1,8 @@
 [package]
-name = "underscore"
+name = "bilk"
 version = "0.0.1"
 edition = "2021"
 authors = ["Collin Richards"]
 description = "Miscellaneous convenience functions and traits"
-repository = "https://github.com/richardscollin/underscore"
+repository = "https://github.com/richardscollin/bilk"
 license = "MIT OR Apache-2.0"
-keywords = ["underscore"]
