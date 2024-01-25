@@ -1,6 +1,6 @@
 [package]
 name = "bilk"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 authors = ["Collin Richards"]
 description = "Miscellaneous convenience functions and traits"
