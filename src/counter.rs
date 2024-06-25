@@ -1,6 +1,8 @@
 /// Tally occurrences using `.collect::<Counter>()`
-#[derive(Clone, Debug)]
-pub struct Counter<K, V = usize>(std::collections::HashMap<K, V>);
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Counter<K, V = usize>(std::collections::HashMap<K, V>)
+where
+    K: std::cmp::Eq + std::hash::Hash;
 
 impl<T> FromIterator<T> for Counter<T>
 where
@@ -30,7 +32,7 @@ where
 
 impl<T> Counter<T>
 where
-    T: Clone,
+    T: Clone + Eq + std::hash::Hash,
 {
     pub fn into_iter_multi(self) -> impl Iterator<Item = T> {
         // use repeat_n when: <https://github.com/rust-lang/rust/issues/104434> is merged
@@ -54,7 +56,10 @@ where
 }
 */
 
-impl<K, V> IntoIterator for Counter<K, V> {
+impl<K, V> IntoIterator for Counter<K, V>
+where
+    K: std::cmp::Eq + std::hash::Hash,
+{
     type Item = (K, V);
     type IntoIter = std::collections::hash_map::IntoIter<K, V>;
 
@@ -82,7 +87,7 @@ where
 }
 
 /// Tally the occurrences of elements in an iterator
-pub trait IntoCounter<T> {
+pub trait IntoCounter<T: std::hash::Hash + std::cmp::Eq> {
     fn counter(self) -> Counter<T>;
 }
 impl<T: Eq + std::hash::Hash + Ord, I: Iterator<Item = T>> IntoCounter<T> for I {

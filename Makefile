@@ -1,9 +1,5 @@
 all: check lint typos coverage
 
-install-deps:
-	rustup update
-	rustup component add llvm-tools-preview rustfmt
-	cargo install cargo-llvm-cov cargo-nextest cargo-sort typos-cli
 run:
 	cargo run
 test:
@@ -24,5 +20,12 @@ typos:
 	typos
 sort-toml:
 	cargo sort --grouped 
+semver-checks:
+	cargo semver-checks
 fmt:
 	cargo +nightly fmt
+
+install-deps:
+	rustup update
+	rustup component add llvm-tools-preview rustfmt
+	cargo install cargo-llvm-cov cargo-nextest cargo-sort cargo-semver-checks typos-cli
