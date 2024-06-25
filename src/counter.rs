@@ -1,3 +1,4 @@
+/// Tally occurrences using `.collect::<Counter>()`
 #[derive(Clone, Debug)]
 pub struct Counter<K, V = usize>(std::collections::HashMap<K, V>);
 
