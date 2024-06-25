@@ -5,7 +5,10 @@ mod cumsum;
 mod lift;
 mod neighbors;
 
-pub use counter::{Counter, IntoCounter};
+pub use counter::{
+    Counter,
+    IntoCounter,
+};
 pub use counting_sort::counting_sort;
 pub use cumsum::CumSum;
 pub use lift::lift;

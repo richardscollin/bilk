@@ -25,4 +25,4 @@ typos:
 sort-toml:
 	cargo sort --grouped 
 fmt:
-	cargo fmt
+	cargo +nightly fmt
