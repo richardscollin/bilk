@@ -7,3 +7,4 @@ description = "Miscellaneous convenience functions and traits"
 repository = "https://github.com/richardscollin/bilk"
 rust-version = "1.79"
 license = "MIT OR Apache-2.0"
+include = ["/src", "README.md"]
