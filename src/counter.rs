@@ -1,14 +1,9 @@
-use std::{
-    collections::HashMap,
-    hash::Hash,
-};
-
 #[derive(Clone, Debug)]
-pub struct Counter<K, V = usize>(HashMap<K, V>);
+pub struct Counter<K, V = usize>(std::collections::HashMap<K, V>);
 
 impl<T> FromIterator<T> for Counter<T>
 where
-    T: Eq + Ord + Hash,
+    T: Eq + Ord + std::hash::Hash,
 {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         Self(iter.into_iter().fold(Default::default(), |mut acc, item| {
@@ -18,10 +13,49 @@ where
     }
 }
 
-type IntoIter<K, V> = std::collections::hash_map::IntoIter<K, V>;
+impl<T> Counter<T>
+where
+    T: Eq + Ord + std::hash::Hash,
+{
+    fn intersect(mut self, other: Self) -> Self {
+        self.0.retain(|k, _| other.0.contains_key(k));
+        for (k, v) in other.0 {
+            let x = self.0.entry(k).or_default();
+            *x = usize::min(*x, v);
+        }
+        self
+    }
+}
+
+impl<T> Counter<T>
+where
+    T: Clone,
+{
+    fn into_iter_multi(self) -> impl Iterator<Item = T> {
+        self.0
+            .into_iter()
+            .map(|(k, v)| std::iter::repeat(k).take(v))
+            .flatten()
+    }
+}
+
+/*
+impl<T> Extend<T> for Counter<T>
+where
+    T: IntoIterator,
+    T::Item: Eq + PartialEq + std::hash::Hash,
+{
+    fn extend(&mut self, iter: T) {
+        for item in iter {
+            self.0.entry(item)
+        }
+    }
+}
+*/
+
 impl<K, V> IntoIterator for Counter<K, V> {
     type Item = (K, V);
-    type IntoIter = IntoIter<K, V>;
+    type IntoIter = std::collections::hash_map::IntoIter<K, V>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
@@ -30,7 +64,7 @@ impl<K, V> IntoIterator for Counter<K, V> {
 
 impl<K, V> Counter<K, V>
 where
-    K: Eq + Hash + Ord,
+    K: Eq + std::hash::Hash + Ord,
     V: Ord + Default,
 {
     pub fn is_subset(&self, other: &Self) -> bool {
@@ -41,15 +75,16 @@ where
                 .all(|key| &self.0[key] <= other.0.get(key).unwrap_or(&Default::default()))
     }
 
-    pub fn into_hashmap(self) -> HashMap<K, V> {
-        self.into_iter().collect::<HashMap<K, V>>()
+    pub fn into_hashmap(self) -> std::collections::HashMap<K, V> {
+        self.into_iter().collect()
     }
 }
 
+/// Tally the occurrences of elements in an iterator
 pub trait IntoCounter<T> {
     fn counter(self) -> Counter<T>;
 }
-impl<T: Eq + Hash + Ord, I: Iterator<Item = T>> IntoCounter<T> for I {
+impl<T: Eq + std::hash::Hash + Ord, I: Iterator<Item = T>> IntoCounter<T> for I {
     fn counter(self) -> Counter<T> {
         self.collect()
     }
@@ -66,5 +101,5 @@ fn test_counter() {
     let counter2 = text2.chars().counter();
     assert!(counter.is_subset(&counter2));
 
-    let _x = counter.into_iter().collect::<HashMap<char, usize>>();
+    let _x: std::collections::HashMap<char, usize> = counter.into_iter().collect();
 }

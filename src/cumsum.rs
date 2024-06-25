@@ -1,9 +1,9 @@
-/// Calculates the cumulative sum of an iterator
+/// Calculate the cumulative sum of an iterator
 pub trait CumSum<T> {
     fn cumsum(self) -> impl Iterator<Item = T>;
 }
 
-/// Calculates the cumulative sum of an iterator
+/// Calculate the cumulative sum of an iterator
 ///
 /// This implementation initializes the accumulator with
 /// the default value and AddAssign's each additional value
