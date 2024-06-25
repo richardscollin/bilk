@@ -17,7 +17,7 @@ impl<T> Counter<T>
 where
     T: Eq + Ord + std::hash::Hash,
 {
-    fn intersect(mut self, other: Self) -> Self {
+    pub fn intersect(mut self, other: Self) -> Self {
         self.0.retain(|k, _| other.0.contains_key(k));
         for (k, v) in other.0 {
             let x = self.0.entry(k).or_default();
@@ -31,11 +31,11 @@ impl<T> Counter<T>
 where
     T: Clone,
 {
-    fn into_iter_multi(self) -> impl Iterator<Item = T> {
+    pub fn into_iter_multi(self) -> impl Iterator<Item = T> {
+        // use repeat_n when: <https://github.com/rust-lang/rust/issues/104434> is merged
         self.0
             .into_iter()
-            .map(|(k, v)| std::iter::repeat(k).take(v))
-            .flatten()
+            .flat_map(|(k, v)| std::iter::repeat(k).take(v))
     }
 }
 
